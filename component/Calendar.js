@@ -10,6 +10,8 @@ const Calendar = () => {
   const [dateArray, setDateArray] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
 
+  const yoilArr = ['Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat'];
+
   // date 변경(화살표 클릭) 시 해당 월의 day배열 계산
   useEffect(() => {
     const newYear = date.getFullYear();
@@ -44,11 +46,6 @@ const Calendar = () => {
     }
 
     setDateArray(dateArr);
-
-    console.log('date ==>', date);
-    console.log('dateArr ==>', dateArr);
-    console.log('lastDate ==>', lastDate);
-    console.log('firstDayIndex ==>', newFirstDayYoil);
   }, [date]);
 
   // 이전 달로 이동
@@ -69,7 +66,7 @@ const Calendar = () => {
     return (
       <View style={styles.daysGrid}>
         {dateArray.map((dateObj, index) => {
-          // 개선 필요
+          // 개선 필요 (추후 수정)
           const isSelected =
             selectedDate &&
             dateObj.year === selectedDate.year &&
@@ -104,7 +101,7 @@ const Calendar = () => {
         onNextMonth={goNextMonth}
       />
       <View style={styles.weekRow}>
-        {['Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+        {yoilArr.map((day, index) => (
           <Text
             style={[
               styles.weekDay,
