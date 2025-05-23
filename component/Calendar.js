@@ -65,28 +65,11 @@ const Calendar = () => {
     setSelectedDate(_dateObj);
   };
 
-  return (
-    <View style={styles.container}>
-      <CalendarHeader
-        date={date}
-        onPrevMonth={goPrevMonth}
-        onNextMonth={goNextMonth}
-      />
-      <View style={styles.weekRow}>
-        {['Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-          <Text
-            style={[
-              styles.weekDay,
-              day === 'Sun' && styles.sunday,
-              day === 'Sat' && styles.saturday,
-            ]}
-            key={index}>
-            {day}
-          </Text>
-        ))}
-      </View>
+  const renderDays = () => {
+    return (
       <View style={styles.daysGrid}>
         {dateArray.map((dateObj, index) => {
+          // 개선 필요
           const isSelected =
             selectedDate &&
             dateObj.year === selectedDate.year &&
@@ -110,6 +93,30 @@ const Calendar = () => {
           );
         })}
       </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <CalendarHeader
+        date={date}
+        onPrevMonth={goPrevMonth}
+        onNextMonth={goNextMonth}
+      />
+      <View style={styles.weekRow}>
+        {['Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+          <Text
+            style={[
+              styles.weekDay,
+              day === 'Sun' && styles.sunday,
+              day === 'Sat' && styles.saturday,
+            ]}
+            key={index}>
+            {day}
+          </Text>
+        ))}
+      </View>
+      {renderDays()}
     </View>
   );
 };
