@@ -1,29 +1,33 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import CalendarHeader from './CalendarHeader';
 
 const Calendar = () => {
   const [date, setDate] = useState(new Date());
   const [year, setYear] = useState(date.getFullYear());
   const [month, setMonth] = useState(date.getMonth());
+  const [firstDayYoil, setFirstDayYoil] = useState(0); //첫 째 날 요일
   const [dayArray, setDayArray] = useState([]);
 
   // date 변경(화살표 클릭) 시 해당 월의 day배열 계산
   useEffect(() => {
     const newYear = date.getFullYear();
     const newMonth = date.getMonth();
+    const newFirstDayYoil = new Date(newYear, newMonth, 1).getDay();
     const lastDate = new Date(newYear, newMonth + 1, 0).getDate();
-    const firstDayYoil = new Date(newYear, newMonth, 1).getDay(); //첫 째 날 요일
+    const previousLastDate = new Date(newYear, newMonth, 0).getDate();
 
     setYear(newYear);
     setMonth(newMonth);
+    setFirstDayYoil(newFirstDayYoil);
 
     let dayArr = [];
 
-    // 추후 회색 글씨로 전 달 날짜 추가 필요 (제거 요망)
-    for (let i = 0; i < firstDayYoil; i++) {
-      dayArr.push(null);
+    // 전 달에 대한 날짜 추가
+    for (let i = 0; i < newFirstDayYoil; i++) {
+      dayArr.push(previousLastDate - i);
     }
+    dayArr.reverse();
 
     for (let i = 1; i <= lastDate; i++) {
       dayArr.push(i);
@@ -33,7 +37,7 @@ const Calendar = () => {
 
     console.log('date ==>', date);
     console.log('lastDate ==>', lastDate);
-    console.log('firstDayIndex ==>', firstDayYoil);
+    console.log('firstDayIndex ==>', newFirstDayYoil);
   }, [date]);
 
   // 이전 달로 이동
@@ -69,9 +73,17 @@ const Calendar = () => {
       <View style={styles.daysGrid}>
         {dayArray.map((day, index) => (
           <View style={styles.dayBox} key={index}>
-            <Text style={day ? styles.dayText : styles.emptyDayText}>
-              {day}
-            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('index ===>', index);
+              }}>
+              <Text
+                style={
+                  index < firstDayYoil ? styles.emptyDayText : styles.dayText
+                }>
+                {day}
+              </Text>
+            </TouchableOpacity>
           </View>
         ))}
       </View>
@@ -114,7 +126,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   emptyDayText: {
-    color: 'transparent',
+    color: '#999',
   },
 });
 
