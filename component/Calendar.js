@@ -8,9 +8,12 @@ const Calendar = () => {
   const [month, setMonth] = useState(date.getMonth());
   const [firstDayYoil, setFirstDayYoil] = useState(0); //첫 째 날 요일
   const [dayArray, setDayArray] = useState([]);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(null);
 
   // date 변경(화살표 클릭) 시 해당 월의 day배열 계산
   useEffect(() => {
+    setSelectedDayIndex(null);
+
     const newYear = date.getFullYear();
     const newMonth = date.getMonth();
     const newFirstDayYoil = new Date(newYear, newMonth, 1).getDay();
@@ -50,6 +53,10 @@ const Calendar = () => {
     setDate(new Date(year, month + 1));
   };
 
+  const selectDay = _index => {
+    setSelectedDayIndex(_index);
+  };
+
   return (
     <View style={styles.container}>
       <CalendarHeader
@@ -72,19 +79,24 @@ const Calendar = () => {
       </View>
       <View style={styles.daysGrid}>
         {dayArray.map((day, index) => (
-          <View style={styles.dayBox} key={index}>
-            <TouchableOpacity
-              onPress={() => {
-                console.log('index ===>', index);
-              }}>
+          <TouchableOpacity
+            style={styles.dayBox}
+            key={index}
+            onPress={() => {
+              selectDay(index);
+            }}>
+            <View
+              style={index == selectedDayIndex && styles.selectedDayButton}
+              key={index}>
               <Text
-                style={
-                  index < firstDayYoil ? styles.emptyDayText : styles.dayText
-                }>
+                style={[
+                  index < firstDayYoil ? styles.emptyDayText : styles.dayText,
+                  index == selectedDayIndex && styles.selectedDayText,
+                ]}>
                 {day}
               </Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
@@ -118,7 +130,17 @@ const styles = StyleSheet.create({
   },
   dayBox: {
     width: '14.28%',
+    height: '100%',
     aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedDayButton: {
+    width: '50%',
+    height: '50%',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'skyblue',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -127,6 +149,9 @@ const styles = StyleSheet.create({
   },
   emptyDayText: {
     color: '#999',
+  },
+  selectedDayText: {
+    fontWeight: 'bold',
   },
 });
 
