@@ -7,13 +7,11 @@ const Calendar = () => {
   const [year, setYear] = useState(date.getFullYear());
   const [month, setMonth] = useState(date.getMonth());
   const [firstDayYoil, setFirstDayYoil] = useState(0); //첫 째 날 요일
-  const [dayArray, setDayArray] = useState([]);
-  const [selectedDayIndex, setSelectedDayIndex] = useState(null);
+  const [dateArray, setDateArray] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   // date 변경(화살표 클릭) 시 해당 월의 day배열 계산
   useEffect(() => {
-    setSelectedDayIndex(null);
-
     const newYear = date.getFullYear();
     const newMonth = date.getMonth();
     const newFirstDayYoil = new Date(newYear, newMonth, 1).getDay();
@@ -24,21 +22,31 @@ const Calendar = () => {
     setMonth(newMonth);
     setFirstDayYoil(newFirstDayYoil);
 
-    let dayArr = [];
+    let dateArr = [];
 
     // 전 달에 대한 날짜 추가
     for (let i = 0; i < newFirstDayYoil; i++) {
-      dayArr.push(previousLastDate - i);
+      dateArr.push({
+        year: newYear,
+        month: newMonth - 1,
+        day: previousLastDate - i,
+      });
     }
-    dayArr.reverse();
+    dateArr.reverse();
 
+    // 현재 달 날짜 추가
     for (let i = 1; i <= lastDate; i++) {
-      dayArr.push(i);
+      dateArr.push({
+        year: newYear,
+        month: newMonth,
+        day: i,
+      });
     }
 
-    setDayArray(dayArr);
+    setDateArray(dateArr);
 
     console.log('date ==>', date);
+    console.log('dateArr ==>', dateArr);
     console.log('lastDate ==>', lastDate);
     console.log('firstDayIndex ==>', newFirstDayYoil);
   }, [date]);
@@ -53,8 +61,8 @@ const Calendar = () => {
     setDate(new Date(year, month + 1));
   };
 
-  const selectDay = _index => {
-    setSelectedDayIndex(_index);
+  const selectDay = _dateObj => {
+    setSelectedDate(_dateObj);
   };
 
   return (
@@ -78,26 +86,29 @@ const Calendar = () => {
         ))}
       </View>
       <View style={styles.daysGrid}>
-        {dayArray.map((day, index) => (
-          <TouchableOpacity
-            style={styles.dayBox}
-            key={index}
-            onPress={() => {
-              selectDay(index);
-            }}>
-            <View
-              style={index == selectedDayIndex && styles.selectedDayButton}
-              key={index}>
-              <Text
-                style={[
-                  index < firstDayYoil ? styles.emptyDayText : styles.dayText,
-                  index == selectedDayIndex && styles.selectedDayText,
-                ]}>
-                {day}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+        {dateArray.map((dateObj, index) => {
+          const isSelected =
+            selectedDate &&
+            dateObj.year === selectedDate.year &&
+            dateObj.month === selectedDate.month &&
+            dateObj.day === selectedDate.day;
+          return (
+            <TouchableOpacity
+              style={styles.dayBox}
+              key={index}
+              onPress={() => selectDay(dateObj)}>
+              <View style={isSelected && styles.selectedDayButton} key={index}>
+                <Text
+                  style={[
+                    index < firstDayYoil ? styles.emptyDayText : styles.dayText,
+                    isSelected && styles.selectedDayText,
+                  ]}>
+                  {dateObj.day}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
