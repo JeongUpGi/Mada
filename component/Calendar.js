@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import CalendarHeader from './CalendarHeader';
+import DivisionLine from './DivisionLine';
 
 const Calendar = () => {
   const [date, setDate] = useState(new Date());
@@ -9,8 +10,9 @@ const Calendar = () => {
   const [firstDayYoil, setFirstDayYoil] = useState(0); //첫 째 날 요일
   const [dateArray, setDateArray] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('식단');
 
-  const yoilArr = ['Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat'];
+  const yoilArr = ['일', '월', '화', '수', '목', '금', '토'];
 
   // date 변경(화살표 클릭) 시 해당 월의 day배열 계산
   useEffect(() => {
@@ -62,6 +64,26 @@ const Calendar = () => {
     setSelectedDate(_dateObj);
   };
 
+  const selectCategory = _category => {
+    setSelectedCategory(_category);
+  };
+
+  // 받침 구분 판단 헬퍼
+  const hasFinalConsonant = word => {
+    if (!word || word.length === 0) {
+      return false;
+    }
+    const lastChar = word[word.length - 1];
+    const unicode = lastChar.charCodeAt(0);
+
+    if (unicode >= 0xac00 && unicode <= 0xd7a3) {
+      const index = unicode - 0xac00;
+      return index % 28 !== 0;
+    }
+
+    return false;
+  };
+
   const renderDays = () => {
     return (
       <View style={styles.daysGrid}>
@@ -102,29 +124,68 @@ const Calendar = () => {
       />
       <View style={styles.weekRow}>
         {yoilArr.map((day, index) => (
-          <Text
-            style={[
-              styles.weekDay,
-              day === 'Sun' && styles.sunday,
-              day === 'Sat' && styles.saturday,
-            ]}
-            key={index}>
+          <Text style={styles.weekDay} key={index}>
             {day}
           </Text>
         ))}
       </View>
       {renderDays()}
+
+      <View style={{height: 20}} />
+      <DivisionLine />
+
+      <View style={styles.categoryButtonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.categoryButton,
+            selectedCategory == '식단' && styles.selectedCategoryButton,
+          ]}
+          onPress={() => selectCategory('식단')}>
+          <Text style={styles.categoryText}>식단 0</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.categoryButton,
+            selectedCategory == '운동' && styles.selectedCategoryButton,
+          ]}
+          onPress={() => selectCategory('운동')}>
+          <Text style={styles.categoryText}>운동 0</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.categoryButton,
+            selectedCategory == '신체' && styles.selectedCategoryButton,
+          ]}
+          onPress={() => selectCategory('신체')}>
+          <Text style={styles.categoryText}>신체 0</Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.guidanceText}>
+        추가버튼을 눌러{'\n'}
+        {selectedCategory}
+        {hasFinalConsonant(selectedCategory) ? '을' : '를'}
+        기록해주세요
+      </Text>
+
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => {
+          console.log('추가');
+        }}>
+        <Text style={styles.addButtonText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: '100%',
     paddingVertical: 20,
-    paddingHorizontal: 10,
   },
   weekRow: {
+    marginHorizontal: 10,
     flexDirection: 'row',
     marginBottom: 10,
   },
@@ -140,6 +201,7 @@ const styles = StyleSheet.create({
     color: 'skyblue',
   },
   daysGrid: {
+    marginHorizontal: 10,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
@@ -154,6 +216,7 @@ const styles = StyleSheet.create({
     width: '50%',
     height: '50%',
     borderRadius: 20,
+    backgroundColor: 'skyblue',
     borderWidth: 1,
     borderColor: 'skyblue',
     justifyContent: 'center',
@@ -167,6 +230,52 @@ const styles = StyleSheet.create({
   },
   selectedDayText: {
     fontWeight: 'bold',
+    color: '#fff',
+  },
+  categoryButtonContainer: {
+    backgroundColor: '#f5f5f5',
+    marginHorizontal: 30,
+    borderRadius: 10,
+    padding: 5,
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  categoryButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedCategoryButton: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+  },
+  categoryText: {
+    fontSize: 18,
+  },
+  guidanceText: {
+    fontSize: 15,
+    marginTop: 30,
+    textAlign: 'center',
+    color: '#c0c0c0',
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 40,
+    right: 20,
+    backgroundColor: 'skyblue',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 50,
   },
 });
 
