@@ -6,7 +6,7 @@ const Calendar = () => {
   const [date, setDate] = useState(new Date());
   const [year, setYear] = useState(date.getFullYear());
   const [month, setMonth] = useState(date.getMonth());
-  const [firstDayYoil, setFirstDayYoil] = useState(0); //첫 째 날 요일
+  const [firstWeekDay, setFirstWeekDay] = useState(0); //첫 째 날 요일 인덱스(0: 일요일, 1: 월요일)
   const [dateArray, setDateArray] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -16,18 +16,18 @@ const Calendar = () => {
   useEffect(() => {
     const newYear = date.getFullYear();
     const newMonth = date.getMonth();
-    const newFirstDayYoil = new Date(newYear, newMonth, 1).getDay();
+    const newFirstWeekDay = new Date(newYear, newMonth, 1).getDay();
     const lastDate = new Date(newYear, newMonth + 1, 0).getDate();
     const previousLastDate = new Date(newYear, newMonth, 0).getDate();
 
     setYear(newYear);
     setMonth(newMonth);
-    setFirstDayYoil(newFirstDayYoil);
+    setFirstWeekDay(newFirstWeekDay);
 
     let dateArr = [];
 
     // 전 달에 대한 날짜 추가
-    for (let i = 0; i < newFirstDayYoil; i++) {
+    for (let i = 0; i < newFirstWeekDay; i++) {
       dateArr.push({
         year: newYear,
         month: newMonth - 1,
@@ -66,7 +66,6 @@ const Calendar = () => {
     return (
       <View style={styles.daysGrid}>
         {dateArray.map((dateObj, index) => {
-          // 개선 필요 (추후 수정)
           const isSelected =
             selectedDate &&
             dateObj.year === selectedDate.year &&
@@ -80,7 +79,7 @@ const Calendar = () => {
               <View style={isSelected && styles.selectedDayButton} key={index}>
                 <Text
                   style={[
-                    index < firstDayYoil ? styles.emptyDayText : styles.dayText,
+                    index < firstWeekDay ? styles.emptyDayText : styles.dayText,
                     isSelected && styles.selectedDayText,
                   ]}>
                   {dateObj.day}
