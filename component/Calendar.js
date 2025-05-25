@@ -117,11 +117,7 @@ const Calendar = () => {
 
   return (
     <View style={styles.container}>
-      <CalendarHeader
-        date={date}
-        onPrevMonth={goPrevMonth}
-        onNextMonth={goNextMonth}
-      />
+      <CalendarHeader date={date} onPressArrow={() => {}} />
       <View style={styles.weekRow}>
         {yoilArr.map((day, index) => (
           <Text style={styles.weekDay} key={index}>

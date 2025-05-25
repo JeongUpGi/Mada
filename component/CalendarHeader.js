@@ -8,7 +8,7 @@ const CalendarHeader = props => {
       <Text style={styles.headerText}>
         {`${props.date.getFullYear()}년 ${props.date.getMonth() + 1}월`}
       </Text>
-      <TouchableOpacity style={styles.navButton} onPress={props.onNextMonth}>
+      <TouchableOpacity style={styles.navButton} onPress={props.onPressArrow}>
         <MaterialCommunityIcons name="arrow-down" color={'#000'} size={15} />
       </TouchableOpacity>
     </View>
